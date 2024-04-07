@@ -1,10 +1,14 @@
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.awt.event.ActionEvent;
 
 import org.w3c.dom.events.MouseEvent;
 
@@ -12,17 +16,16 @@ import java.awt.image.BufferStrategy;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import java.time.Duration;
-import java.time.Instant;
 
 public class Visualizer {
 	private static final int PADDING = 20;
@@ -102,7 +105,6 @@ public class Visualizer {
 		// initial position
 		double x = PADDING;
 		int y = canvasHeight - PADDING;
-		System.out.println(canvasWidth);
 		// width of all bars
 		double width = (double) (canvasWidth - PADDING * 2) / capacity;
 
@@ -198,7 +200,6 @@ public class Visualizer {
 		g = bs.getDrawGraphics();
 		// calculate elapsed time
 		time = measureSortTime("bubble");
-		System.out.println(time);
 		comp = swapping = 0;
 		int count = 0;
 		for (int i = array.length - 1; i >= 0; i--) {
@@ -209,10 +210,10 @@ public class Visualizer {
 				if (array[j] > array[j + 1]) {
 					swap(j, j + 1);
 					count++;
-					// swapping++;
+					swapping++;
 				}
 
-				comp++;
+				// comp++;
 			}
 			bars[i].setColor(getBarColor(i));
 			if (Array.length > 35) {
@@ -225,7 +226,6 @@ public class Visualizer {
 			if (count == 0) // the array is sorted
 				break;
 		}
-
 		finishAnimation("bubblesort", time);
 
 		g.dispose();
@@ -267,7 +267,6 @@ public class Visualizer {
 
 			bs.show();
 		}
-
 		finishAnimation("selection", time);
 		g.dispose();
 	}
@@ -411,7 +410,6 @@ public class Visualizer {
 		index++;
 		swap(index, end);
 		swapping++;
-
 		return index;
 	}
 
@@ -442,7 +440,6 @@ public class Visualizer {
 			}
 			bs.show();
 		}
-		// System.out.println(time + " " + comp);
 		finishAnimation("heapsort", time);
 		g.dispose();
 	}
@@ -671,7 +668,6 @@ public class Visualizer {
 			try {
 				ArrayList<Integer> numbers = readNumbersFromFile(selectedFile);
 				readNumbersFromArray(numbers);
-				// System.out.println("Dãy số từ file là: " + numbers);
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
@@ -710,56 +706,35 @@ public class Visualizer {
 		createArray(1020, 620, intArray);
 	}
 
-	public interface SortedListener {
-		void onArraySorted(long elapsedTime, String name);
-
-		void clearLable();
-
-		BufferStrategy getBufferStrategy();
+	public Integer[] Sort(Integer ar[]) {
+		for (int i = ar.length - 1; i >= 0; i--) {
+			// find the max
+			int max = ar[i], index = i;
+			for (int j = 0; j <= i; j++) {
+				if (max < ar[j]) {
+					max = ar[j];
+					index = j;
+				}
+			}
+			swap(i, index, ar);
+		}
+		return ar;
 	}
 
-	// public void exportFile() {
-	// JFileChooser fileChooser = new JFileChooser();
-	// int userSelection = fileChooser.showSaveDialog(null);
-	// if (userSelection == JFileChooser.APPROVE_OPTION) {
-	// try {
-	// // Lấy tên file được chọn
-	// String filename = fileChooser.getSelectedFile().getAbsolutePath();
-	// // Ghi dữ liệu vào file
-	// try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-	// // Ghi dãy số ban đầu
-	// writer.write("Original Array: \n");
-	// for (int i = 0; i < Array.length; i++) {
-	// writer.write(Array[i].toString());
-	// if (i < Array.length - 1) {
-	// writer.write(" ");
-	// }
-	// }
-	// writer.newLine();
-	// // Ghi dãy số sau khi sắp xếp
-	// writer.write("Sorted Array: \n");
-	// for (int i = 0; i < array.length; i++) {
-	// writer.write(array[i].toString());
-	// if (i < array.length - 1) {
-	// writer.write(" ");
-	// }
-	// }
-	// } catch (IOException e) {
-	// System.err.println("Error writing to file " + filename);
-	// e.printStackTrace();
-	// } catch (NullPointerException e) {
-	// System.err.println("Error: Array is not initialized");
-	// e.printStackTrace();
-	// }
-	// } catch (NullPointerException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// }
+	private void swap(int i, int j, Integer ar[]) {
+		// swap the elements
+		int temp = ar[j];
+		ar[j] = ar[i];
+		ar[i] = temp;
+	}
 
 	public void exportFile() {
 		JFileChooser fileChooser = new JFileChooser();
 		int userSelection = fileChooser.showSaveDialog(null);
+		Integer[] ar = new Integer[Array.length];
+		for (int i = 0; i < Array.length; i++) {
+			ar[i] = Array[i];
+		}
 		if (userSelection == JFileChooser.APPROVE_OPTION) {
 			try {
 				File selectedFile = fileChooser.getSelectedFile();
@@ -775,14 +750,31 @@ public class Visualizer {
 							writer.write(" ");
 						}
 					}
+					ar = Sort(ar);
 					writer.newLine();
 					writer.write("Sorted Array: \n");
-					for (int i = 0; i < array.length; i++) {
-						writer.write(array[i].toString());
-						if (i < array.length - 1) {
+					for (int i = 0; i < ar.length; i++) {
+						writer.write(ar[i].toString());
+						if (i < ar.length - 1) {
 							writer.write(" ");
 						}
 					}
+					writer.newLine();
+					Integer[] arrayCopy = Arrays.copyOf(Array, array.length);
+					writer.write("Bubble Sort: " + Sort.bubbleSort(arrayCopy) + " \n");
+					arrayCopy = Arrays.copyOf(Array, array.length);
+
+					writer.write("Selection Sort: " + Sort.selectionSort(arrayCopy) + " \n");
+					arrayCopy = Arrays.copyOf(Array, array.length);
+
+					writer.write("Insertion Sort: " + Sort.insertionSort(arrayCopy) + " \n");
+					arrayCopy = Arrays.copyOf(Array, array.length);
+
+					writer.write("Quick Sort: " + Sort.quickSort(arrayCopy) + " \n");
+					arrayCopy = Arrays.copyOf(Array, array.length);
+
+					writer.write("Heap Sort: " + Sort.heapSort(arrayCopy) + " \n");
+
 				} catch (IOException e) {
 					System.err.println("Error writing to file " + filename);
 					e.printStackTrace();
@@ -796,4 +788,56 @@ public class Visualizer {
 		}
 	}
 
+	public void compareSort() {
+		JFrame popupFrame = new JFrame("Sorting Comparison");
+		JPanel pn = new JPanel();
+		popupFrame.setSize(300, 300);
+		// popupFrame.setLayout(new GridLayout(5, 1));
+		pn.setSize(300, 300);
+		pn.setLayout(new GridLayout(5, 1));
+		pn.setBackground(ColorManager.BACKGROUND);
+		Integer[] arrayCopy = Arrays.copyOf(Array, array.length);
+		JLabel label1 = new JLabel("Bubble Sort: " + Sort.bubbleSort(arrayCopy));
+		// popupFrame.add(label1);
+		label1.setForeground(ColorManager.TEXT_LABLE);
+		pn.add(label1);
+
+		arrayCopy = Arrays.copyOf(Array, array.length);
+		JLabel label2 = new JLabel("Insertion Sort: " + Sort.insertionSort(arrayCopy));
+		label2.setForeground(ColorManager.TEXT_LABLE);
+		// popupFrame.add(label2);
+		pn.add(label2);
+
+		arrayCopy = Arrays.copyOf(Array, array.length);
+		JLabel label3 = new JLabel("Selection Sort: " + Sort.selectionSort(arrayCopy));
+		// popupFrame.add(label3);
+		label3.setForeground(ColorManager.TEXT_LABLE);
+		pn.add(label3);
+
+		arrayCopy = Arrays.copyOf(Array, array.length);
+		JLabel label4 = new JLabel("Quick Sort: " + Sort.quickSort(arrayCopy));
+		// popupFrame.add(label4);
+		label4.setForeground(ColorManager.TEXT_LABLE);
+		pn.add(label4);
+
+		arrayCopy = Arrays.copyOf(Array, array.length);
+		JLabel label5 = new JLabel("Heap Sort: " + Sort.heapSort(arrayCopy));
+		// popupFrame.add(label5);
+		label5.setForeground(ColorManager.TEXT_LABLE);
+		pn.add(label5);
+
+		// popupFrame.setLocationRelativeTo(null);
+		popupFrame.setBackground(ColorManager.BACKGROUND);
+		popupFrame.add(pn);
+		popupFrame.setLocation(230, 390);
+		popupFrame.setVisible(true);
+	}
+
+	public interface SortedListener {
+		void onArraySorted(long elapsedTime, String name);
+
+		void clearLable();
+
+		BufferStrategy getBufferStrategy();
+	}
 }

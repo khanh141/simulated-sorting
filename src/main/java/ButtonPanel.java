@@ -24,8 +24,8 @@ public class ButtonPanel extends JPanel {
 		initButtons(buttons[2], "insertion_button", 2);
 		initButtons(buttons[3], "quick_button", 3);
 		initButtons(buttons[4], "heap_button", 4);
-		initButtons(buttons[5], "heap_button", 9);
-		initButtons(buttons[6], "heap_button", 6);
+		initButtons(buttons[5], "export_button", 9);
+		initButtons(buttons[6], "compare_button", 10);
 
 		// initButtons(buttons[6], "create_button", 6);
 

@@ -15,6 +15,6 @@ public class ColorManager {
 	public static Color TEXT_RED = new Color(221, 77, 77);
 	public static Color TEXT_YELLOW = new Color(244, 183, 7);
 	public static Color TEXT_GREEN = new Color(68, 212, 163);
-
+	public static Color TEXT_LABLE = new Color(245, 245, 220);
 	public static Color FIELD_BORDER = new Color(38, 38, 38);
 }

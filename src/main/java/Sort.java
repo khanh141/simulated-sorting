@@ -1,145 +1,91 @@
 // Sort algorithms
 public class Sort {
-	public static <T extends Comparable<T>> void selectionSort(T[] data) {
+	public static <T extends Comparable<T>> int selectionSort(T[] data) {
+		int swapcount = 0;
 		for (int i = 0; i < data.length; i++) {
-			// find the minimum value from i to the end
 			int min = i;
 
 			for (int scan = i; scan < data.length; scan++)
 				if (data[scan].compareTo(data[min]) < 0)
 					min = scan;
-
+			// swapcount++;
+			swapcount += (min != i) ? 1 : 0;
 			swap(data, i, min);
+
 		}
+
+		return swapcount;
 
 	}
 
-	public static <T extends Comparable<T>> void insertionSort(T[] data) {
+	public static <T extends Comparable<T>> int insertionSort(T[] data) {
+		int swapcount = 0;
 		for (int i = 1; i < data.length; i++) {
-			T current = data[i]; // the current element which needs sorting
+			T current = data[i]; // phần tử hiện tại cần sắp xếp
 			int position = i;
 
 			while (position > 0 && data[position - 1].compareTo(current) > 0) {
-				data[position] = data[position - 1];
+				swapcount++;
+				swap(data, position, position - 1);
 				position--;
 			}
 
 			data[position] = current;
 		}
+		return swapcount;
 	}
 
-	public static <T extends Comparable<T>> void bubbleSort(T[] data) {
+	public static <T extends Comparable<T>> int bubbleSort(T[] data) {
+		int swapcount = 0;
 		int position, scan;
 
 		for (position = data.length - 1; position > 0; position--) {
 			for (scan = 0; scan < position; scan++) {
-				if (data[scan].compareTo(data[scan + 1]) > 0)
+				if (data[scan].compareTo(data[scan + 1]) > 0) {
+					swapcount++;
 					swap(data, scan, scan + 1);
+				}
 			}
 		}
+		return swapcount;
 	}
 
-	public static <T extends Comparable<T>> void quickSort(T[] data) {
+	private static int countquick;
+
+	public static <T extends Comparable<T>> int quickSort(T[] data) {
+		countquick = 0;
 		quickSort(data, 0, data.length - 1);
+		return countquick;
 	}
 
 	private static <T extends Comparable<T>> void quickSort(T[] data, int start, int end) {
 		if (start < end) {
-			// get the pivot index (here I choose the middle one)
 			int middle = partition(data, start, end);
-
-			// sort the left partition
 			quickSort(data, start, middle - 1);
-
-			// sort the right partition
 			quickSort(data, middle + 1, end);
 		}
+		return;
 	}
 
 	private static <T extends Comparable<T>> int partition(T[] data, int start, int end) {
-		int pivot = (start + end) / 2;
-		int left, right;
-		T pivotElem = data[pivot]; // the pivot element
-
-		// move the pivot to the beginning of the array
-		swap(data, pivot, start);
-
-		left = start + 1;
-		right = end;
-
-		while (left < right) {
-			// find the next element that is greater than pivot
-			while (left < right && data[left].compareTo(pivotElem) <= 0)
-				left++;
-
-			// find the next element that is less than pivot
-			while (data[right].compareTo(pivotElem) > 0)
-				right--;
-
-			if (left < right)
-				swap(data, left, right);
-		}
-
-		// move pivot back to its position
-		// right is now the index of an element that less than pivot
-		swap(data, start, right);
-
-		return right;
-	}
-
-	public static <T extends Comparable<T>> void mergeSort(T[] data) {
-		mergeSort(data, 0, data.length - 1);
-	}
-
-	private static <T extends Comparable<T>> void mergeSort(T[] data, int start, int end) {
-		if (start < end) {
-			int middle = (start + end) / 2;
-
-			// recursively divide the list in half until there's only 1 left
-			mergeSort(data, start, middle);
-			mergeSort(data, middle + 1, end);
-
-			// merge the two partition
-			merge(data, start, middle, end);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private static <T extends Comparable<T>> void merge(T[] data, int start, int middle, int end) {
-		T[] temp = (T[]) (new Comparable[end - start + 1]); // store the merged list
-		int left = start, right = middle + 1; // start indexes of the two partitions
-		int index = 0;
-
-		// looping until one partition runs out of elements
-		while (left <= middle && right <= end) {
-			if (data[left].compareTo(data[right]) < 0) {
-				temp[index] = data[left];
-				left++;
-			} else {
-				temp[index] = data[right];
-				right++;
+		int pivotIndex = (start + end) / 2;
+		T pivot = data[pivotIndex];
+		swap(data, pivotIndex, end);
+		int storeIndex = start;
+		for (int i = start; i < end; i++) {
+			if (data[i].compareTo(pivot) < 0) {
+				swap(data, i, storeIndex);
+				storeIndex++;
+				countquick++;
 			}
-
-			index++;
 		}
-
-		// add the rest of elements to the list
-		if (left <= middle)
-			for (int i = 0; i <= middle - left; i++)
-				temp[index + i] = data[left + i];
-
-		if (right <= end)
-			for (int i = 0; i <= end - right; i++)
-				temp[index + i] = data[right + i];
-
-		// add all elemnts to the original list
-		for (int i = 0; i <= end - start; i++)
-			data[start + i] = temp[i];
+		swap(data, storeIndex, end - 1);
+		return storeIndex;
 	}
 
-	public static <T extends Comparable<T>> void heapSort(T[] data) {
+	public static <T extends Comparable<T>> int heapSort(T[] data) {
 		int n = data.length;
-
+		int swapcount = 0;
 		// Build heap (rearrange array)
 		for (int i = n / 2 - 1; i >= 0; i--) {
 			heapify(data, n, i);
@@ -148,11 +94,13 @@ public class Sort {
 		// One by one extract an element from the heap
 		for (int i = n - 1; i > 0; i--) {
 			// Move current root to the end
+			swapcount++;
 			swap(data, 0, i);
 
 			// call max heapify on the reduced heap
 			heapify(data, i, 0);
 		}
+		return swapcount;
 	}
 
 	// To heapify a subtree rooted with node i which is an index in the array.
@@ -160,7 +108,7 @@ public class Sort {
 		int largest = i; // Initialize largest as root
 		int leftChild = 2 * i + 1; // left child = 2*i + 1
 		int rightChild = 2 * i + 2; // right child = 2*i + 2
-
+		// int swapcount = 0;
 		// If left child is larger than root
 		if (leftChild < n && data[leftChild].compareTo(data[largest]) > 0) {
 			largest = leftChild;
@@ -173,11 +121,13 @@ public class Sort {
 
 		// If largest is not root
 		if (largest != i) {
+			// swapcount++;
 			swap(data, i, largest);
 
 			// Recursively heapify the affected sub-tree
 			heapify(data, n, largest);
 		}
+		return;
 	}
 
 	// swap element and target in the array

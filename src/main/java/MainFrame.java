@@ -1,11 +1,9 @@
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JFormattedTextField;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
-import javax.swing.JToggleButton;
 import javax.swing.BoxLayout;
 import javax.swing.JFileChooser;
 import javax.swing.BorderFactory;
@@ -222,13 +220,14 @@ public class MainFrame extends JFrame implements PropertyChangeListener,
 		inforPanel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
 		inforPanel.setBackground(ColorManager.BACKGROUND);
 		// inforPanel.setBounds(410, 10, 800, 70);
-		inforPanel.setBounds(300, 10, 800, 70);
+		inforPanel.setBounds(300, 10, 900, 70);
 
 		// Tạo và cấu hình panel1
 		// int inforPanelWidth = inforPanel.getWidth();
 		// int panel1X = inforPanelWidth - 59;
-		ButtonPanel panel1 = new ButtonPanel(this, "init_button", 7, 60, 20);
-		panel1.setBounds(660, 15, 60, 20);
+		// ButtonPanel panel1 = new ButtonPanel(this, "reinit_button", 7, 60, 20);
+		ButtonPanel panel1 = new ButtonPanel(this, "reinit_button", 7);
+		panel1.setBounds(660, 0, 200, 70);
 		panel1.setBackground(ColorManager.BACKGROUND);
 		// btn tạo mảng ngẫu nhiên
 		ButtonPanel panel2 = new ButtonPanel(this, "ramdom_button", 6);
@@ -304,6 +303,9 @@ public class MainFrame extends JFrame implements PropertyChangeListener,
 				break;
 			case 9:
 				visualizer.exportFile();
+				break;
+			case 10:
+				visualizer.compareSort();
 				break;
 
 		}
