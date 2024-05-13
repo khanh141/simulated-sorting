@@ -63,29 +63,42 @@ public class ButtonPanel extends JPanel {
 	}
 
 	private void initButtons(JLabel button, String name, int id) {
-		button.setIcon(new ImageIcon(String.format("buttons/%s.png", name)));
+		final JLabel finalButton = button;
+		final String name1 = name;
+		final int stt = id;
+		String imagePath = "C:\\Users\\DELL\\OneDrive\\Desktop\\simulated-sorting\\src\\main\\java\\buttons\\";
+		button.setIcon(new ImageIcon(imagePath + name + ".png"));
+//		button.setIcon(new ImageIcon(String.format(imagePath+"buttons/%s.png", name)));
 		button.addMouseListener(new MouseListener() {
 			public void mouseClicked(MouseEvent e) {
 			}
-
+			@Override
 			public void mouseEntered(MouseEvent e) {
-				button.setIcon(new ImageIcon(String.format("buttons/%s_entered.png", name)));
+				finalButton.setIcon(new ImageIcon(String.format("buttons/%s_entered.png", name1)));
+				// finalButton.setIcon(new ImageIcon(String.format(imagePath+ name1+".png")));
+
 			}
 
+			@Override
 			public void mouseExited(MouseEvent e) {
-				button.setIcon(new ImageIcon(String.format("buttons/%s.png", name)));
+				// finalButton.setIcon(new ImageIcon(String.format(imagePath+ name1+".png")));
+				finalButton.setIcon(new ImageIcon(String.format("buttons/%s.png", name1)));
 			}
-
-			public void mousePressed(MouseEvent e) {
-				button.setIcon(new ImageIcon(String.format("buttons/%s_pressed.png", name)));
-			}
-
+			@Override
 			public void mouseReleased(MouseEvent e) {
-				listener.sortButtonClicked(id);
-				button.setIcon(new ImageIcon(String.format("buttons/%s_entered.png", name)));
-			}
-		});
+				listener.sortButtonClicked(stt);
+				finalButton.setIcon(new ImageIcon(String.format(imagePath+ name1+"_entered.png")));
+				// finalButton.setIcon(new ImageIcon((imagePath+ name1+"_entered.png")));
 
+			}
+			@Override
+			public void mousePressed(MouseEvent e) {
+				finalButton.setIcon(new ImageIcon(String.format("buttons/%s_pressed.png", name1)));
+				// finalButton.setIcon(new ImageIcon((imagePath+ name1+"_pressed.png")));
+
+			}
+
+		});
 	}
 
 	public interface SortButtonListener {
